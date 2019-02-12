@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+welcome-file
+</body>
+</html>
+
+
+<script type="text/javascript">
+var ws = new WebSocket("ws://localhost:8080/community/ckl");
+
+//建立 web socket 连接成功触发事件
+ws.onopen = function () {
+// 使用 send() 方法发送数据
+//ws.send("发送数据");
+alert("连接成功");
+};
+</script>
