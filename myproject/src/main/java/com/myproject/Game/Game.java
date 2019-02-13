@@ -8,26 +8,30 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSON;
+
 public class Game {
 	private static String[] numbers = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 	private static String[] types = {"条", "筒", "万"};
 	private static String[] others = { "东风", "南风", "西风", "北风", "红中", "发财", "白板" };
 	
-	private String king;
+	private String king; //龙
+	
+	private String first="1";
 	
 	private String[] player = {"1", "2", "3", "4"};
-    private List<Integer> player1 = new ArrayList<Integer>();
+    private List<Integer> player1 = new ArrayList<Integer>();  //每个玩家手中的牌
     private List<Integer> player2 = new ArrayList<Integer>();
     private List<Integer> player3 = new ArrayList<Integer>();
     private List<Integer> player4 = new ArrayList<Integer>();
 	
-	private Integer get_index = 0;
+	private Integer get_index = 0; //下张要摸的牌
 	
 	private Map<String, ArrayList<Integer>> player_have = new HashMap<String, ArrayList<Integer>>();
 	
-	private Map<Integer, String> majiang = new HashMap<Integer, String>();
+	private Map<Integer, String> majiang = new HashMap<Integer, String>(); //麻将牌和序号的键值对
 	
-	private List<Integer> majiangNumber = new ArrayList<Integer>();
+	private List<Integer> majiangNumber = new ArrayList<Integer>(); //序号的列表
 
     public void init(){
 		int index = 0;
@@ -57,6 +61,7 @@ public class Game {
 	     }
 	     
 	     Collections.shuffle(majiangNumber);
+	     this.deal();
 	}
     
     
@@ -100,11 +105,16 @@ public class Game {
         player_have.put(player[2], (ArrayList<Integer>) player3);
         player_have.put(player[3], (ArrayList<Integer>) player4);
         getKing(get_index);
+        get_index++;
         System.out.println("发了" + get_index + "张牌");
         Collections.sort(player1);
         Collections.sort(player2);
         Collections.sort(player3);
         Collections.sort(player4);
+        System.out.println(player1);
+        System.out.println(player2);
+        System.out.println(player3);
+        System.out.println(player4);
     }
     
     public void getKing(Integer n){
@@ -134,15 +144,19 @@ public class Game {
     	System.out.println("龙是:"+king);
     }
     
-    public void getPlayerHave(String player){
+    public String getPlayerHave(String player){
         //遍历List集合,获取元素,作为键,到集合Map中找值
         System.out.print(player + " " + "共有" + player_have.get(player).size() + "张牌:  ");
+        //System.out.println(player_have.get(player));
+        Map<Integer,String> result = new HashMap<Integer,String>();
         for (Integer key : player_have.get(player))
         {
             String value = majiang.get(key);
-            System.out.print("[" + value + "] ");
+            //System.out.print("[" + value + "] ");
+            result.put(key, value);
         }
-        System.out.println();
+        //System.out.println(result);
+        return JSON.toJSONString(result);
     }
     
     
@@ -162,6 +176,22 @@ public class Game {
     }
     
     
+    //出牌
+    public void playRound(String player,Integer index){
+    	player_have.get(player).remove(index);
+    	System.out.println(player+"出牌"+":"+index);
+    	System.out.println(player_have.get(player));
+    }
+    
+    
+    public String getKing(){
+    	return king;
+    }
+    
+    public String getFirst(){
+    	return first;
+    }
+    
     public static void main(String[] args){
     	Game game = new Game();
     	game.init();
@@ -172,6 +202,7 @@ public class Game {
     	game.getPlayerHave("3");
     	game.getPlayerHave("4");
     }
+    
     
  
 }
