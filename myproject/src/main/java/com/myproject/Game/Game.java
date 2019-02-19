@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 public class Game {
 	private static String[] numbers = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -19,15 +21,24 @@ public class Game {
 	
 	private String first="1";
 	
+	private String next_player="1";
+	
 	private String[] player = {"1", "2", "3", "4"};
     private List<Integer> player1 = new ArrayList<Integer>();  //每个玩家手中的牌
     private List<Integer> player2 = new ArrayList<Integer>();
     private List<Integer> player3 = new ArrayList<Integer>();
     private List<Integer> player4 = new ArrayList<Integer>();
+    
+    private List<Integer> player_deal1 = new ArrayList<Integer>();  //每个玩家打掉的牌
+    private List<Integer> player_deal2 = new ArrayList<Integer>();
+    private List<Integer> player_deal3 = new ArrayList<Integer>();
+    private List<Integer> player_deal4 = new ArrayList<Integer>();
 	
 	private Integer get_index = 0; //下张要摸的牌
 	
 	private Map<String, ArrayList<Integer>> player_have = new HashMap<String, ArrayList<Integer>>();
+	
+	private Map<String, ArrayList<Integer>> player_deal = new HashMap<String, ArrayList<Integer>>();
 	
 	private Map<Integer, String> majiang = new HashMap<Integer, String>(); //麻将牌和序号的键值对
 	
@@ -104,6 +115,12 @@ public class Game {
         player_have.put(player[1], (ArrayList<Integer>) player2);
         player_have.put(player[2], (ArrayList<Integer>) player3);
         player_have.put(player[3], (ArrayList<Integer>) player4);
+        
+        player_deal.put(player[0], (ArrayList<Integer>) player_deal1);
+        player_deal.put(player[1], (ArrayList<Integer>) player_deal2);
+        player_deal.put(player[2], (ArrayList<Integer>) player_deal3);
+        player_deal.put(player[3], (ArrayList<Integer>) player_deal4);
+        
         getKing(get_index);
         get_index++;
         System.out.println("发了" + get_index + "张牌");
@@ -179,7 +196,14 @@ public class Game {
     //出牌
     public void playRound(String player,Integer index){
     	player_have.get(player).remove(index);
-    	System.out.println(player+"出牌"+":"+index);
+    	System.out.println(player+"出牌"+":"+index+"-"+majiang.get(index));
+    	System.out.println(player_have.get(player));
+    }
+    
+    public void getRound(String player){
+    	player_have.get(player).add(get_index);
+    	System.out.println(player+"摸牌"+":"+majiangNumber.get(get_index)+"-"+majiang.get(majiangNumber.get(get_index)));
+    	get_index++;
     	System.out.println(player_have.get(player));
     }
     
@@ -192,15 +216,78 @@ public class Game {
     	return first;
     }
     
+    public String getNextPlayer(){
+    	return next_player;
+    }
+    
+    public void setNextPlayer(String now_player){
+       	int i = Integer.valueOf(now_player);
+    	if(i == 4){
+    		next_player = "1";
+    	}else{
+    		i++;
+    		next_player = String.valueOf(i);
+    	}
+    }
+    
+    
+    public String getOperationPeng(String player,Integer index){
+    	String s = majiang.get(index);
+    	int count = 0;
+    	for(Integer key : player_have.get(player)){
+    		if(majiang.get(key).equals(s)){
+    			count++;
+    		}
+    	}
+    	if(count == 2){
+    		return "true";
+    	}else{
+    		return "false";
+    	}
+    }
+    
+    public String getOperationGang(String player,Integer index){
+    	String s = majiang.get(index);
+    	int count = 0;
+    	for(Integer key : player_have.get(player)){
+    		if(majiang.get(key).equals(s)){
+    			count++;
+    		}
+    	}
+    	if(count == 3){
+    		return "true";
+    	}else{
+    		return "false";
+    	}
+    }
+    
+    public String getOperationGangSelf(String player){
+    	JSONArray result = new JSONArray();
+    	int flag = 0;
+    	for(Integer key1 : player_have.get(player)){
+    		int count = 0;
+    		for(Integer key2 : player_have.get(player)){
+    			if(majiang.get(key1).equals(majiang.get(key2))){
+    				count++;
+    			}
+    		}
+    		if(count==4){
+    			JSONObject jso = new JSONObject();
+    			jso.put(String.valueOf(key1),"true");
+    			flag++;
+    			result.add(jso);
+    		}
+    	}
+    	if(flag == 0){
+    		return "false";
+    	}else{
+    		return result.toJSONString();
+    	}
+    }
+    
     public static void main(String[] args){
     	Game game = new Game();
-    	game.init();
-    	game.getRestAll();
-    	game.deal();
-    	game.getPlayerHave("1");
-    	game.getPlayerHave("2");
-    	game.getPlayerHave("3");
-    	game.getPlayerHave("4");
+    	System.out.println(game.getNextPlayer());
     }
     
     

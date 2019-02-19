@@ -1,5 +1,6 @@
 package com.myproject.WebSocket;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +33,7 @@ public class MyHandler {
 	private Integer roomId = 1;  //房间ID
 	
 	@OnOpen
-	public void onOpen(@PathParam(value = "ro_user") String ro_user, Session session) {
+	public void onOpen(@PathParam(value = "ro_user") String ro_user, Session session) throws IOException {
 		System.out.println(ro_user+"建立socket连接");
 		this.session = session;
 		this.userId = ro_user;
@@ -46,7 +47,7 @@ public class MyHandler {
 			}
 		}
 		players.add(this);
-		//System.out.println(players);
+		//System.out.println("当前在线玩家"+players);
 		if(players.size() == 4){
 			initGame();
 		}
@@ -59,7 +60,7 @@ public class MyHandler {
 	    if (players != null) {
 	    	  players.remove(this);
 	    }
-	    //System.out.println(players);
+	    //System.out.println("当前在线玩家"+players);
 	}
 	
     @OnError    
@@ -69,13 +70,54 @@ public class MyHandler {
     }
     
     @OnMessage
-    public void onMessage(final String message, Session session) {
+    public void onMessage(final String message, Session session) throws IOException {
     	Game game = room_game.get(roomId);
     	JSONObject jso = JSON.parseObject(message);
     	if(jso.getString("type").equals("play")){
     		game.playRound(userId,jso.getInteger("index"));
+    		game.setNextPlayer(userId);
     		showPrivateHave();
-    	}
+    		CopyOnWriteArraySet<MyHandler> players = room_user.get(roomId);
+    		int flag = 0; //0:无吃碰
+    		if (players != null) {
+    			for (MyHandler item : players) {
+    				if(item != this){
+    					JSONObject result = new JSONObject();
+    					int flag2 = 0;
+    					if(game.getOperationGang(item.userId,jso.getInteger("index")) == "true"){
+    						result.put("gang","true");
+    						flag2 = 1;
+    						flag = 1;
+    					}
+    					if(game.getOperationPeng(item.userId,jso.getInteger("index")) == "true"){
+    						result.put("peng","true");
+    						flag2 = 1;
+    						flag = 1;
+    					}
+    					if(flag2 == 1){
+    						item.session.getBasicRemote().sendText(result.toJSONString());
+    					}
+    				}
+    			}
+    			if(flag == 0){
+    				System.out.println("没人吃碰,下家开始");
+    				for (MyHandler item : players) {
+    					if(item.userId.equals(game.getNextPlayer())){
+    						game.getRound(item.userId);
+            				JSONObject result = new JSONObject();
+            				result.put("play", "true");
+    						item.session.getBasicRemote().sendText(result.toJSONString());
+    					}
+    				}
+    			}
+    		}	
+    	}// end of type play
+    	
+    	if(jso.getString("type").equals("peng")){
+    		
+    	}// end of type peng
+    	
+    	
     }
     
     private void showPrivateHave(){
@@ -84,7 +126,7 @@ public class MyHandler {
     }
     
     //牌局初始化
-    public void initGame(){
+    public void initGame() throws IOException{
     	Game game = new Game();
     	room_game.put(roomId, game);
     	System.out.println("牌局初始化");
@@ -92,14 +134,17 @@ public class MyHandler {
         CopyOnWriteArraySet<MyHandler> players = room_user.get(roomId);        
         if (players != null) {            
         	for (MyHandler item : players) { 
-        		item.session.getAsyncRemote().sendText(game.getPlayerHave(item.userId));
+        		item.session.getBasicRemote().sendText(game.getPlayerHave(item.userId));
         	}
         	for (MyHandler item : players) {                
-        		item.session.getAsyncRemote().sendText(game.getKing());
+        		item.session.getBasicRemote().sendText(game.getKing());
         	} 
         	for (MyHandler item : players) {    
         		if(item.userId.equals(game.getFirst())){
-        			item.session.getAsyncRemote().sendText("play");
+        				JSONObject result = new JSONObject();
+        				result.put("play", "true");
+        				result.put("gang", game.getOperationGangSelf(item.userId));
+        				item.session.getBasicRemote().sendText(result.toJSONString());
         		}
         	}
         }
