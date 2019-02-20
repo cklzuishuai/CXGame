@@ -84,12 +84,12 @@ public class MyHandler {
     				if(item != this){
     					JSONObject result = new JSONObject();
     					int flag2 = 0;
-    					if(game.getOperationGang(item.userId,jso.getInteger("index")) == "true"){
+    					if(game.getOperationGang(item.userId,jso.getInteger("index"))){
     						result.put("gang","true");
     						flag2 = 1;
     						flag = 1;
     					}
-    					if(game.getOperationPeng(item.userId,jso.getInteger("index")) == "true"){
+    					if(game.getOperationPeng(item.userId,jso.getInteger("index"))){
     						result.put("peng","true");
     						flag2 = 1;
     						flag = 1;
@@ -114,6 +114,8 @@ public class MyHandler {
     	}// end of type play
     	
     	if(jso.getString("type").equals("peng")){
+    		game.setNextPlayer(userId);
+    		game.Peng(userId);
     		
     	}// end of type peng
     	
@@ -142,8 +144,8 @@ public class MyHandler {
         	for (MyHandler item : players) {    
         		if(item.userId.equals(game.getFirst())){
         				JSONObject result = new JSONObject();
-        				result.put("play", "true");
-        				result.put("gang", game.getOperationGangSelf(item.userId));
+        				result.put("play","true");
+        				result.put("gangself", game.getOperationGangSelf(item.userId));
         				item.session.getBasicRemote().sendText(result.toJSONString());
         		}
         	}

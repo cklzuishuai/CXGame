@@ -36,6 +36,8 @@ public class Game {
 	
 	private Integer get_index = 0; //下张要摸的牌
 	
+	private Integer focus;
+	
 	private Map<String, ArrayList<Integer>> player_have = new HashMap<String, ArrayList<Integer>>();
 	
 	private Map<String, ArrayList<Integer>> player_deal = new HashMap<String, ArrayList<Integer>>();
@@ -196,6 +198,8 @@ public class Game {
     //出牌
     public void playRound(String player,Integer index){
     	player_have.get(player).remove(index);
+    	focus = index;
+    	player_deal.get(player).add(index);
     	System.out.println(player+"出牌"+":"+index+"-"+majiang.get(index));
     	System.out.println(player_have.get(player));
     }
@@ -231,7 +235,7 @@ public class Game {
     }
     
     
-    public String getOperationPeng(String player,Integer index){
+    public boolean getOperationPeng(String player,Integer index){
     	String s = majiang.get(index);
     	int count = 0;
     	for(Integer key : player_have.get(player)){
@@ -240,13 +244,26 @@ public class Game {
     		}
     	}
     	if(count == 2){
-    		return "true";
+    		return true;
     	}else{
-    		return "false";
+    		return false;
     	}
     }
     
-    public String getOperationGang(String player,Integer index){
+    public void Peng(String player){
+    	int count = 0;
+    	for(Integer key : player_have.get(player)){
+    		if(majiang.get(key).equals(focus)){
+    			player_have.remove(key);
+    			count++;
+    		}
+    		if(count == 2){
+    			break;
+    		}
+    	}
+    }
+    
+    public boolean getOperationGang(String player,Integer index){
     	String s = majiang.get(index);
     	int count = 0;
     	for(Integer key : player_have.get(player)){
@@ -255,13 +272,13 @@ public class Game {
     		}
     	}
     	if(count == 3){
-    		return "true";
+    		return true;
     	}else{
-    		return "false";
+    		return false;
     	}
     }
     
-    public String getOperationGangSelf(String player){
+    public boolean getOperationGangSelf(String player){
     	JSONArray result = new JSONArray();
     	int flag = 0;
     	for(Integer key1 : player_have.get(player)){
@@ -279,9 +296,9 @@ public class Game {
     		}
     	}
     	if(flag == 0){
-    		return "false";
+    		return false;
     	}else{
-    		return result.toJSONString();
+    		return true;
     	}
     }
     
