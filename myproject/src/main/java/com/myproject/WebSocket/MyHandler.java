@@ -104,6 +104,7 @@ public class MyHandler {
     				for (MyHandler item : players) {
     					if(item.userId.equals(game.getNextPlayer())){
     						game.getRound(item.userId);
+    						item.showPrivateHave();
             				JSONObject result = new JSONObject();
             				result.put("play", "true");
     						item.session.getBasicRemote().sendText(result.toJSONString());
@@ -113,12 +114,23 @@ public class MyHandler {
     		}	
     	}// end of type play
     	
-    	if(jso.getString("type").equals("peng")){
+    	else if(jso.getString("type").equals("peng")){
     		game.setNextPlayer(userId);
     		game.Peng(userId);
-    		
+			JSONObject result = new JSONObject();
+			result.put("play", "true");
+			this.session.getBasicRemote().sendText(result.toJSONString());
     	}// end of type peng
     	
+    	else if(jso.getString("type").equals("gang")){
+    		game.setNextPlayer(userId);
+    		game.Gang(userId);
+    		game.getAfterGang(userId);
+    		this.showPrivateHave();
+			JSONObject result = new JSONObject();
+			result.put("play", "true");
+			this.session.getBasicRemote().sendText(result.toJSONString());
+    	}// end of type gang
     	
     }
     
@@ -126,6 +138,8 @@ public class MyHandler {
     	Game game = room_game.get(roomId);    	
     	this.session.getAsyncRemote().sendText(game.getPlayerHave(this.userId));
     }
+    
+        
     
     //牌局初始化
     public void initGame() throws IOException{

@@ -36,6 +36,8 @@ public class Game {
 	
 	private Integer get_index = 0; //下张要摸的牌
 	
+	private Integer last_index = 0; //杠后摸的牌
+	
 	private Integer focus;
 	
 	private Map<String, ArrayList<Integer>> player_have = new HashMap<String, ArrayList<Integer>>();
@@ -211,6 +213,13 @@ public class Game {
     	System.out.println(player_have.get(player));
     }
     
+    public void getAfterGang(String player){
+    	player_have.get(player).add(last_index);
+    	System.out.println(player+"摸牌"+":"+majiangNumber.get(last_index)+"-"+majiang.get(majiangNumber.get(last_index)));
+    	last_index--;
+    	System.out.println(player_have.get(player));
+    }
+    
     
     public String getKing(){
     	return king;
@@ -258,6 +267,19 @@ public class Game {
     			count++;
     		}
     		if(count == 2){
+    			break;
+    		}
+    	}
+    }
+    
+    public void Gang(String player){
+    	int count = 0;
+    	for(Integer key : player_have.get(player)){
+    		if(majiang.get(key).equals(focus)){
+    			player_have.remove(key);
+    			count++;
+    		}
+    		if(count == 3){
     			break;
     		}
     	}
