@@ -94,6 +94,13 @@ public class MyHandler {
     						flag2 = 1;
     						flag = 1;
     					}
+    					if(item.userId.equals(game.getNextPlayer())){
+    						if(!game.getOperationEat(item.userId).equals("false")){
+    							result.put("eat",game.getOperationEat(item.userId));
+    						}
+    						flag2 = 1;
+    						flag = 1;
+    					}
     					if(flag2 == 1){
     						item.session.getBasicRemote().sendText(result.toJSONString());
     					}
@@ -132,6 +139,9 @@ public class MyHandler {
 			this.session.getBasicRemote().sendText(result.toJSONString());
     	}// end of type gang
     	
+    	else if(jso.getString("type").equals("eat")){
+    		
+    	}// end of type eat
     }
     
     private void showPrivateHave(){

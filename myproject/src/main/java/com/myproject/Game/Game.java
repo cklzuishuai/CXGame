@@ -324,6 +324,116 @@ public class Game {
     	}
     }
     
+    
+    public String getOperationEat(String player){
+    	for(String key : others){      //风头直接返回false
+    		if(key.equals(focus)){
+    			return "false";
+    		}
+    	}
+    	JSONObject result = new JSONObject();
+    	int flag = 0;
+    	if(eat12x(player)){
+    		result.put("eat12x", "true");
+    		flag = 1;
+    	}
+    	if(eat1x3(player)){
+    		result.put("eat1x3", "true");
+    		flag = 1;
+    	}
+    	if(eatx23(player)){
+    		result.put("eatx23", "true");
+    		flag = 1;
+    	}
+    	if(flag == 0){
+    		return "false";
+    	}else{
+    		return result.toString();
+    	}
+    }
+    
+    
+    public boolean eat12x(String player){
+    	boolean flag1 = false;
+    	boolean flag2 = false;
+    	int front1;
+    	int front2;
+    	String focus_name = majiang.get(this.focus);
+    	int i = (int)focus_name.charAt(0);
+    	if(i < 3){
+    		return false;
+    	}else{
+    		front1 = --i;
+    		front2 = --i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(front1)+focus_name.charAt(1))){
+    				flag1 = true;
+    			}
+    			else if(majiang.get(key).equals(String.valueOf(front2)+focus_name.charAt(1))){
+    				flag2 = true;
+    			}
+    			if(flag1 && flag2){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    public boolean eat1x3(String player){
+    	boolean flag1 = false;
+    	boolean flag2 = false;
+    	int front;
+    	int after;
+    	String focus_name = majiang.get(this.focus);
+    	int i = (int)focus_name.charAt(0);
+    	if(i < 2 || i>8){
+    		return false;
+    	}else{
+    		front = --i;
+    		i = i+2;
+    		after = i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(front)+focus_name.charAt(1))){
+    				flag1 = true;
+    			}
+    			else if(majiang.get(key).equals(String.valueOf(after)+focus_name.charAt(1))){
+    				flag2 = true;
+    			}
+    			if(flag1 && flag2){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    public boolean eatx23(String player){
+    	boolean flag1 = false;
+    	boolean flag2 = false;
+    	int after1;
+    	int after2;
+    	String focus_name = majiang.get(this.focus);
+    	int i = (int)focus_name.charAt(0);
+    	if(i > 7){
+    		return false;
+    	}else{
+    		after1 = ++i;
+    		after2 = ++i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(after1)+focus_name.charAt(1))){
+    				flag1 = true;
+    			}
+    			else if(majiang.get(key).equals(String.valueOf(after2)+focus_name.charAt(1))){
+    				flag2 = true;
+    			}
+    			if(flag1 && flag2){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    
     public static void main(String[] args){
     	Game game = new Game();
     	System.out.println(game.getNextPlayer());
