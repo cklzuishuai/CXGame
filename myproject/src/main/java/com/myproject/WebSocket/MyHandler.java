@@ -97,9 +97,9 @@ public class MyHandler {
     					if(item.userId.equals(game.getNextPlayer())){
     						if(!game.getOperationEat(item.userId).equals("false")){
     							result.put("eat",game.getOperationEat(item.userId));
+        						flag2 = 1;
+        						flag = 1;
     						}
-    						flag2 = 1;
-    						flag = 1;
     					}
     					if(flag2 == 1){
     						item.session.getBasicRemote().sendText(result.toJSONString());
@@ -144,9 +144,9 @@ public class MyHandler {
     	}// end of type eat
     }
     
-    private void showPrivateHave(){
+    private void showPrivateHave() throws IOException{
     	Game game = room_game.get(roomId);    	
-    	this.session.getAsyncRemote().sendText(game.getPlayerHave(this.userId));
+    	this.session.getBasicRemote().sendText(game.getPlayerHave(this.userId));
     }
     
         

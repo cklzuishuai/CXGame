@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -169,7 +170,7 @@ public class Game {
         //遍历List集合,获取元素,作为键,到集合Map中找值
         System.out.print(player + " " + "共有" + player_have.get(player).size() + "张牌:  ");
         //System.out.println(player_have.get(player));
-        Map<Integer,String> result = new HashMap<Integer,String>();
+        Map<Integer,String> result = new TreeMap<Integer,String>();
         for (Integer key : player_have.get(player))
         {
             String value = majiang.get(key);
@@ -285,6 +286,10 @@ public class Game {
     	}
     }
     
+    public void Eat(String player,String eattype){
+
+    }
+    
     public boolean getOperationGang(String player,Integer index){
     	String s = majiang.get(index);
     	int count = 0;
@@ -327,7 +332,7 @@ public class Game {
     
     public String getOperationEat(String player){
     	for(String key : others){      //风头直接返回false
-    		if(key.equals(focus)){
+    		if(key.equals(majiang.get(focus))){
     			return "false";
     		}
     	}
@@ -359,7 +364,7 @@ public class Game {
     	int front1;
     	int front2;
     	String focus_name = majiang.get(this.focus);
-    	int i = (int)focus_name.charAt(0);
+    	int i = focus_name.charAt(0)-'0';
     	if(i < 3){
     		return false;
     	}else{
@@ -385,7 +390,7 @@ public class Game {
     	int front;
     	int after;
     	String focus_name = majiang.get(this.focus);
-    	int i = (int)focus_name.charAt(0);
+    	int i = focus_name.charAt(0)-'0';
     	if(i < 2 || i>8){
     		return false;
     	}else{
@@ -412,7 +417,7 @@ public class Game {
     	int after1;
     	int after2;
     	String focus_name = majiang.get(this.focus);
-    	int i = (int)focus_name.charAt(0);
+    	int i = focus_name.charAt(0)-'0';
     	if(i > 7){
     		return false;
     	}else{
