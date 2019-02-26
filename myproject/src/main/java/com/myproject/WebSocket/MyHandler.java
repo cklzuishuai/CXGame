@@ -140,8 +140,16 @@ public class MyHandler {
     	}// end of type gang
     	
     	else if(jso.getString("type").equals("eat")){
-    		
+    		game.setNextPlayer(userId);
+    		game.Eat(userId, jso.getString("eattype"));
+    		this.showPrivateHave();
+    		JSONObject result = new JSONObject();
+    		result.put("play", "true");
+    		this.session.getBasicRemote().sendText(result.toJSONString());
     	}// end of type eat
+    	else if(jso.getString("type").equals("win")){
+    		
+    	}
     }
     
     private void showPrivateHave() throws IOException{

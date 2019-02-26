@@ -37,7 +37,7 @@ public class Game {
 	
 	private Integer get_index = 0; //下张要摸的牌
 	
-	private Integer last_index = 0; //杠后摸的牌
+	private Integer last_index = 135; //杠后摸的牌
 	
 	private Integer focus;
 	
@@ -264,7 +264,7 @@ public class Game {
     	int count = 0;
     	for(Integer key : player_have.get(player)){
     		if(majiang.get(key).equals(focus)){
-    			player_have.remove(key);
+    			player_have.get(player).remove(key);
     			count++;
     		}
     		if(count == 2){
@@ -277,7 +277,7 @@ public class Game {
     	int count = 0;
     	for(Integer key : player_have.get(player)){
     		if(majiang.get(key).equals(focus)){
-    			player_have.remove(key);
+    			player_have.get(player).remove(key);
     			count++;
     		}
     		if(count == 3){
@@ -287,7 +287,67 @@ public class Game {
     }
     
     public void Eat(String player,String eattype){
-
+    	if(eattype.equals("eat12x")){
+    		int front1;
+        	int front2;
+        	String focus_name = majiang.get(this.focus);
+        	int i = focus_name.charAt(0)-'0';
+        	front1 = --i;
+    		front2 = --i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(front1)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(front2)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    	}
+    	if(eattype.equals("eat1x3")){
+    		int front;
+        	int after;
+        	String focus_name = majiang.get(this.focus);
+        	int i = focus_name.charAt(0)-'0';
+    		front = --i;
+    		i = i+2;
+    		after = i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(front)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(after)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    	}
+    	if(eattype.equals("eatx23")){
+    		int after1;
+        	int after2;
+        	String focus_name = majiang.get(this.focus);
+        	int i = focus_name.charAt(0)-'0';
+    		after1 = ++i;
+    		after2 = ++i;
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(after1)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    		for(Integer key : player_have.get(player)){ 
+    			if(majiang.get(key).equals(String.valueOf(after2)+focus_name.charAt(1))){
+    				player_have.get(player).remove(key);
+    				break;
+    			}
+    		}
+    	}
     }
     
     public boolean getOperationGang(String player,Integer index){
