@@ -422,15 +422,21 @@ public class Game {
     	if(majiang.get(focus).equals(king)){
     		return false;
     	}
-    	ArrayList<Integer> list = player_have.get(player);  //copy一份玩家手中的牌
+    	if(isPaoHua(player)){
+    		return false;
+    	}
+    	ArrayList<Integer> list = new ArrayList<Integer>();  //copy一份玩家手中的牌
+    	list.addAll(player_have.get(player));
     	list.add(focus);
+    	Collections.sort(list);
     	if(list.size() == 2){
-    		if(list.get(0) == list.get(1) && !majiang.get(list.get(0)).equals(king)){
+    		if(majiang.get(list.get(0)).equals(majiang.get(list.get(1)))){
     			return true;
     		}
     		return false;
     	}
     	if(list.size() == 5){
+    		
     		return false;
     	}
     	if(list.size() == 8){
@@ -440,6 +446,75 @@ public class Game {
     		return false;
     	}
     	if(list.size() == 14){
+    		return false;
+    	}
+    	return false;
+    }
+    
+    public boolean isPaoHua(String player){
+    	ArrayList<Integer> list = new ArrayList<Integer>();
+    	list.addAll(player_have.get(player));
+    	Collections.sort(list);
+    	if(list.size() == 1){
+    		if(majiang.get(list.get(0)).equals(king)){
+    			return true;
+    		}
+    		return false;
+    	}
+    	if(list.size() == 4){
+    		int kingcount=0;
+    		int count =0;
+    		int count2=0;
+    		int count3=0;
+    		for(Integer key : list ){
+    			if(majiang.get(key).equals(king)){
+    				list.remove(key);
+    				kingcount++;
+    			}
+    		}
+    		for(Integer key : list ){
+    			if(majiang.get(key).equals(king)){
+    				list.remove(key);
+    				kingcount++;
+    			}
+    		}
+    		for(int i=0;i<list.size()-2;i++){
+    			int j = majiang.get(list.get(i)).charAt(0)-'0';
+    			if(j<8){
+    				int after1 = i+1;
+    				int after2 = i+2;
+    				boolean flag1 = false;
+    				boolean flag2 = false;
+    				Integer key1 = -1;
+    				Integer key2 = -1;
+    		    	for(Integer key : list){ 
+    		    		if(majiang.get(key).equals(String.valueOf(after1)+majiang.get(list.get(i)).charAt(1))){
+    		    			flag1 = true;
+    		    			key1 = key;
+    		    		}
+    		    		else if(majiang.get(key).equals(String.valueOf(after2)+majiang.get(list.get(i)).charAt(1))){
+    		    			flag2 = true;
+    		    			key2 = key;
+    		    		}
+    		    		if(flag1 && flag2){
+    		    			list.remove(key1);
+    		    			list.remove(key2);
+    		    			count3++;
+    		    			i=-1;
+    		    			break;
+    		    		}
+    		    	}
+    			}
+    		}
+    		return false;
+    	}
+    	if(list.size() == 7){
+    		return false;
+    	}
+    	if(list.size() == 10){
+    		return false;
+    	}
+    	if(list.size() == 13){
     		return false;
     	}
     	return false;
