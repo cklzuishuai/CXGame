@@ -418,6 +418,35 @@ public class Game {
     }
     
     
+    public boolean getOperationWin(String player){
+    	if(majiang.get(focus).equals(king)){
+    		return false;
+    	}
+    	ArrayList<Integer> list = player_have.get(player);  //copy一份玩家手中的牌
+    	list.add(focus);
+    	if(list.size() == 2){
+    		if(list.get(0) == list.get(1) && !majiang.get(list.get(0)).equals(king)){
+    			return true;
+    		}
+    		return false;
+    	}
+    	if(list.size() == 5){
+    		return false;
+    	}
+    	if(list.size() == 8){
+    		return false;
+    	}
+    	if(list.size() == 11){
+    		return false;
+    	}
+    	if(list.size() == 14){
+    		return false;
+    	}
+    	return false;
+    }
+    
+    
+    
     public boolean eat12x(String player){
     	boolean flag1 = false;
     	boolean flag2 = false;
