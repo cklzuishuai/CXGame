@@ -3,6 +3,7 @@ package com.myproject.Game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -435,16 +436,6 @@ public class Game {
     		}
     		return false;
     	}
-    	if(list.size() == 5){
-    		
-    		return false;
-    	}
-    	if(list.size() == 8){
-    		return false;
-    	}
-    	if(list.size() == 11){
-    		return false;
-    	}
     	if(list.size() == 14){
     		return false;
     	}
@@ -455,71 +446,119 @@ public class Game {
     	ArrayList<Integer> list = new ArrayList<Integer>();
     	list.addAll(player_have.get(player));
     	Collections.sort(list);
+    	HashSet<String> hs_dui = getDui(list);
     	if(list.size() == 1){
     		if(majiang.get(list.get(0)).equals(king)){
     			return true;
     		}
     		return false;
     	}
-    	if(list.size() == 4){
-    		int kingcount=0;
-    		int count =0;
-    		int count2=0;
-    		int count3=0;
-    		for(Integer key : list ){
-    			if(majiang.get(key).equals(king)){
-    				list.remove(key);
-    				kingcount++;
+    	if(hs_dui.size()>0){
+    		for(String dui : hs_dui){
+    			ArrayList<Integer> tmp = new ArrayList<Integer>();
+    			tmp.addAll(list);
+    			Collections.sort(tmp);
+    			int kingcount=0;
+    			int count =0;
+    			int count2=0;
+    			int count3=0;
+    			for(Integer key : list ){
+    				int num = 0;
+    				if(majiang.get(key).equals(dui)){
+    					list.remove(key);
+    					num++;
+    				}
+    				if(num == 2){
+    					break;
+    				}
+    			}
+    			for(Integer key : list ){
+    				if(majiang.get(key).equals(king)){
+    					list.remove(key);
+    					kingcount++;
+    				}
+    			}
+    			for(Integer key : list ){
+    				if(majiang.get(key).equals(king)){
+    					list.remove(key);
+    					kingcount++;
+    				}
+    			}
+    			for(int i=0;i<list.size()-2;i++){                        //跳过克子和对子判断顺子
+    				HashSet<String> hs_kz = getKeZi(list);
+    				HashSet<String> hs_ji = getJiang(list);
+    				int j = majiang.get(list.get(i)).charAt(0)-'0';
+    				if(j<8){
+    					int after1 = i+1;
+    					int after2 = i+2;
+    					boolean flag1 = false;
+    					boolean flag2 = false;
+    					Integer key1 = -1;
+    					Integer key2 = -1;
+    					for(Integer key : list){
+    						if(hs_kz.contains(majiang.get(key)) && hs_ji.contains(majiang.get(key))){
+    							break;
+    						}
+    						if(majiang.get(key).equals(String.valueOf(after1)+majiang.get(list.get(i)).charAt(1))){
+    							flag1 = true;
+    							key1 = key;
+    						}
+    						else if(majiang.get(key).equals(String.valueOf(after2)+majiang.get(list.get(i)).charAt(1))){
+    							flag2 = true;
+    							key2 = key;
+    						}
+    						if(flag1 && flag2){
+    							list.remove(key1);
+    							list.remove(key2);
+    							count3++;
+    							i=-1;
+    							break;
+    						}
+    					}
+    				}
     			}
     		}
-    		for(Integer key : list ){
-    			if(majiang.get(key).equals(king)){
-    				list.remove(key);
-    				kingcount++;
-    			}
-    		}
-    		for(int i=0;i<list.size()-2;i++){
-    			int j = majiang.get(list.get(i)).charAt(0)-'0';
-    			if(j<8){
-    				int after1 = i+1;
-    				int after2 = i+2;
-    				boolean flag1 = false;
-    				boolean flag2 = false;
-    				Integer key1 = -1;
-    				Integer key2 = -1;
-    		    	for(Integer key : list){ 
-    		    		if(majiang.get(key).equals(String.valueOf(after1)+majiang.get(list.get(i)).charAt(1))){
-    		    			flag1 = true;
-    		    			key1 = key;
-    		    		}
-    		    		else if(majiang.get(key).equals(String.valueOf(after2)+majiang.get(list.get(i)).charAt(1))){
-    		    			flag2 = true;
-    		    			key2 = key;
-    		    		}
-    		    		if(flag1 && flag2){
-    		    			list.remove(key1);
-    		    			list.remove(key2);
-    		    			count3++;
-    		    			i=-1;
-    		    			break;
-    		    		}
-    		    	}
-    			}
-    		}
-    		return false;
-    	}
-    	if(list.size() == 7){
-    		return false;
-    	}
-    	if(list.size() == 10){
-    		return false;
-    	}
-    	if(list.size() == 13){
-    		return false;
     	}
     	return false;
     }
     
+    
+    public HashSet<String> getKeZi(List list){
+    	HashSet<String>  hs = new HashSet<String>();
+    	for(int i=0;i<list.size()-2;i++){
+    		int after1 = i+1;
+    		int after2 = i+2;
+    		int after3 = i+3;
+    		if(majiang.get(list.get(i)).equals(majiang.get(list.get(after1))) && majiang.get(list.get(i)).equals(majiang.get(list.get(after2))) && !majiang.get(list.get(i)).equals(majiang.get(list.get(after3)))){
+    			hs.add(majiang.get(list.get(i)));
+    		}
+    	}
+    	return hs;
+    }
+    
+    public HashSet<String> getJiang(List list){
+    	HashSet<String>  hs = new HashSet<String>();
+    	for(int i=0;i<list.size()-1;i++){
+    		int after1 = i+1;
+    		int after2 = i+2;
+    		if(majiang.get(list.get(i)).equals(majiang.get(list.get(after1))) && !majiang.get(list.get(i)).equals(majiang.get(list.get(after2)))){
+    			hs.add(majiang.get(list.get(i)));
+    		}
+    	}
+    	return hs;
+    }
+    
+    public HashSet<String> getDui(List list){
+    	HashSet<String>  hs = new HashSet<String>();
+    	for(int i=0;i<list.size()-1;i++){
+    		int after1 = i+1;
+    		int after2 = i+2;
+    		if(majiang.get(list.get(i)).equals(majiang.get(list.get(after1)))){
+    			hs.add(majiang.get(list.get(i)));
+    		}
+    	}
+    	return hs;
+    }
     
     
     public boolean eat12x(String player){
@@ -601,6 +640,10 @@ public class Game {
     	}
     	return false;
     }
+    
+    
+    
+    
     
     
     public static void main(String[] args){
