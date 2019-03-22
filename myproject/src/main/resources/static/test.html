@@ -3,20 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+<style>
+
+#other1_play{
+	width:45%;
+	height:10%;
+	border:2px solid;
+	margin-left:25%;
+	float:left;
+}
+
+#other1_info{
+	width:8%;
+	height:10%;
+	border:2px solid;
+	margin-left:89%;
+}
+
+</style>
+
 </head>
-<body>
-welcome-file
+<body style="width:99%;height:600px;">
+<div id="main" style="background:url(/image/table.jpg) no-repeat;background-size:100%;width:80%;height:100%;padding-top:2.5%;">
+	<div id="other1_play">
+	</div>
+	<div id="other1_info">
+	</div>
+</div>
 </body>
 </html>
 
 
 <script type="text/javascript">
-var ws = new WebSocket("ws://localhost:8080/community/ckl");
+//var ws = new WebSocket("ws://localhost:8080/community/ckl");
 
 //建立 web socket 连接成功触发事件
-ws.onopen = function () {
+//ws.onopen = function () {
 // 使用 send() 方法发送数据
 //ws.send("发送数据");
-alert("连接成功");
-};
+//alert("连接成功");
+//};
 </script>
